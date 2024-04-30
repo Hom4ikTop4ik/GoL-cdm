@@ -24,6 +24,7 @@ default_handler>
 rsect main
 
 main>
-    # nothing
+    inc r1
+    inc r2
 
 end.
