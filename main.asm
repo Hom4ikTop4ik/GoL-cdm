@@ -18,11 +18,11 @@ init:
 	setsp 0xE0 # reserve 32 bytes 
 	
 	# i = 1, j = 1:
-	#ldi r1, 0x00
-	#ldi r0, 0xF8
-	#st r0, r1 # clear high byte i-cursor
-	#ldi r0, 0xFC
-	#st r0, r1 # clear high byte j-cursor
+	ldi r1, 0x00
+	ldi r0, 0xF8
+	st r0, r1 # clear high byte i-cursor
+	ldi r0, 0xFC
+	st r0, r1 # clear high byte j-cursor
 #	
 	#ldi r1, 0x01
 	#ldi r0, 0xF9
