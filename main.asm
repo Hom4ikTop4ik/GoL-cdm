@@ -19,16 +19,17 @@ init:
 	
 	# i = 1, j = 1:
 	ldi r1, 0x00
+	ldi r2, 0x01
+	
 	ldi r0, 0xF8
 	st r0, r1 # clear high byte i-cursor
+	inc r0 # ldi r0, 0xF9
+	st r0, r2 # set low byte i-cursor equal 1
+	
 	ldi r0, 0xFC
 	st r0, r1 # clear high byte j-cursor
-#	
-	#ldi r1, 0x01
-	#ldi r0, 0xF9
-	#st r0, r1 # set low byte i-cursor equal 1
-	#ldi r0, 0xFD
-	#st r0, r1 # set low byte j-cursor equal 1
+	inc r0 # ldi r0, 0xFD
+	st r0, r2 # set low byte j-cursor equal 1
 	
 	
 	# state (should be equal 0b0000_1000 in start): 
@@ -75,7 +76,17 @@ game:
 				if 
 					cmp r1, r0
 				is eq # r1 == 15, i.e. torus keyDowned
-					jsr torus
+					ldi r3, 0xE4 # } r1 = load STATE from memory
+					ld  r3, r1   # } 
+					
+					ldi r0, 0b00000001  # } invert 'torus' value in STATE
+					xor r0, r1 			# } and store to R1
+					
+					st r3, r1 # store STATE to memory
+					
+					ldi r3, 0xF4 # } 'store' STATE to matrix
+					st r3, r1    # } 
+					#jsr torus
 					
 				else # 0 < KB-in < 15, i.e. UP, RIGHT, DOWN or LEFT
 					if
@@ -85,12 +96,12 @@ game:
 						if
 							cmp r1, r0
 						is eq # KB-in == 4, i.e. == RIGHT
-							ldi r2, 0xFD # } store J to r2 and r3 
-							ldi r3, 0xFC # }
+							ldi r3, 0xFD # } store J to r2 and r3 
+							ldi r1, 0xFC # }
 							jsr right # move the cursor 1 column righter
 						else # KB-in == 8, i.e. == UP
-							ldi r2, 0xF9 # } store I to r2 and r3 
-							ldi r3, 0xF8 # }
+							ldi r3, 0xF9 # } store I to r2 and r3 
+							ldi r1, 0xF8 # }
 							jsr up # move the cursor 1 line higher
 						fi
 					else # if DOWN or RIGHT
@@ -98,11 +109,11 @@ game:
 							ldi r0, 0x02
 							cmp r1, r0
 						is eq # KB-in == 2, i.e. == DOWN
-							ldi r2, 0xF9 # } store I to r2 and r3 
+							ldi r0, 0xF9 # } store I to r2 and r3 
 							ldi r3, 0xF8 # }
 							jsr down # move the cursor 1 line lower
 						else # KB-in == 1, i.e. == LEFT
-							ldi r2, 0xFD # } store J to r2 and r3 
+							ldi r0, 0xFD # } store J to r2 and r3 
 							ldi r3, 0xFC # }
 							jsr left # move the cursor 1 column lefter
 						fi
@@ -121,7 +132,16 @@ game:
 					is eq # KB-in == 64, i.e. == CLEAR
 						jsr clear
 					else # KB-in == 128, i.e. == PAUSE
-						jsr pause
+						ldi r3, 0xE4 # }
+						ld r3, r0	 # } r0 = STATE
+						
+						ldi r1, 0b00001000
+						xor r1, r0 # r0 = new STATE, where pause was inverted
+						
+						st r3, r0 # store new STATE to memory
+						ldi r3, 0xF4
+						st r3, r0 # 'store' new STATE to matrix 
+						#jsr pause
 					fi
 					
 				else # 16 <= KB-in < 63
@@ -174,18 +194,18 @@ halt
 
 # DONE
 torus:
-	ldi r3, 0xE4 # } r1 = load STATE from memory
-	ld  r3, r1   # } 
-	
-	ldi r0, 0b00000001  # } invert 'torus' value in state
-	xor r0, r1 			# } and store to R1
-	
-	st r3, r1 # store STATE to memory
-	
-	ldi r3, 0xF4 # } 'store' STATE to matrix
-	st r3, r1    # } 
-	
-	rts # go back
+#	ldi r3, 0xE4 # } r1 = load STATE from memory
+#	ld  r3, r1   # } 
+#	
+#	ldi r0, 0b00000001  # } invert 'torus' value in state
+#	xor r0, r1 			# } and store to R1
+#	
+#	st r3, r1 # store STATE to memory
+#	
+#	ldi r3, 0xF4 # } 'store' STATE to matrix
+#	st r3, r1    # } 
+#	
+#	rts # go back
 
 
 # DONE
@@ -194,7 +214,7 @@ right: # shra j
 	#ldi r1, 0xF8 # } HIGH-byte
 	#ld r1, r1	 # } I
 	
-	ld r3, r1 # I if up, J if right
+	ld r1, r1 # I if up, J if right
 	
 	# if
 		# ldi r0, 0b10000000
@@ -210,7 +230,7 @@ right: # shra j
 	#ldi r0, 0xF9 # } LOW-byte
 	#ld r0, r0	 # } I
 	
-	ld r2, r0 # I if up, J if right
+	ld r3, r0 # I if up, J if right
 	
 	if
 		cmp r1, r0
@@ -262,7 +282,7 @@ left: # shr j
 	#ldi r1, 0xF9 # } LOW-byte
 	#ld r0, r0	 # } I
 	
-	ld r2, r0 # I if down, J if left
+	ld r0, r0 # I if down, J if left
 	
 	if
 		ldi r1, 0x01
@@ -342,17 +362,17 @@ clear:
 	rts # go back
 
 pause:
-	ldi r3, 0xE4 # }
-	ld r3, r0	 # } r0 = STATE
-	
-	ldi r1, 0b00001000
-	xor r1, r0 # r0 = new STATE, where pause was inverted
-	
-	st r3, r0 # store new STATE to memory
-	ldi r3, 0xF4
-	st r3, r0 # 'store' new STATE to matrix 
-	
-	rts # go back
+#	ldi r3, 0xE4 # }
+#	ld r3, r0	 # } r0 = STATE
+#	
+#	ldi r1, 0b00001000
+#	xor r1, r0 # r0 = new STATE, where pause was inverted
+#	
+#	st r3, r0 # store new STATE to memory
+#	ldi r3, 0xF4
+#	st r3, r0 # 'store' new STATE to matrix 
+#	
+#	rts # go back
 
 set0:
 set1:
@@ -371,6 +391,8 @@ setInv:
 	
 	rts # go back
 
+reserve:
+	dc 0xCD, 0xCD, 0xCD, 0xCD
 
 
 end.
