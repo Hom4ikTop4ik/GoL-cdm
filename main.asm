@@ -107,12 +107,12 @@ game:
 							# it is enough to do cmp 1 time — comment
 							# cmp r1, r0
 						is eq # KB-in == 4, i.e. == RIGHT
-							ldi r0, 0xFE # } store HIGH-byte of J in memory to r0 
-							ldi r1, 0xF7 # } store LOW-byte  of J in matrix to r1
+							ldi r0, 0xF6 # } store HIGH-byte of J in memory to r0 
+							ldi r1, 0xFF # } store LOW-byte  of J in matrix to r1
 							jsr right # move the cursor 1 column righter
 						else # KB-in == 8, i.e. == UP
-							ldi r0, 0xFC # } store HIGH-byte of I in memory to r0 
-							ldi r1, 0xF5 # } store LOW-byte  of I in matrix to r1
+							ldi r0, 0xF4 # } store HIGH-byte of I in memory to r0 
+							ldi r1, 0xFD							 # } store LOW-byte  of I in matrix to r1
 							jsr up # move the cursor 1 line higher
 						fi
 					else # if DOWN or RIGHT
@@ -120,12 +120,12 @@ game:
 							ldi r0, 0x02
 							cmp r1, r0
 						is eq # KB-in == 2, i.e. == DOWN
-							ldi r0, 0xFD # } store LOW-byte  of I in memory to r0 
-							ldi r1, 0xF4 # } store HIGH-byte of I in matrix to r1
+							ldi r0, 0xF5 # } store LOW-byte  of I in memory to r0 
+							ldi r1, 0xFC # } store HIGH-byte of I in matrix to r1
 							jsr down # move the cursor 1 line lower
 						else # KB-in == 1, i.e. == LEFT
-							ldi r0, 0xFF # } store LOW-byte  of J in memory to r0 
-							ldi r1, 0xF6 # } store HIGH-byte of J in matrix to r1
+							ldi r0, 0xF7 # } store LOW-byte  of J in memory to r0 
+							ldi r1, 0xFE # } store HIGH-byte of J in matrix to r1
 							jsr left # move the cursor 1 column lefter
 						fi
 						
