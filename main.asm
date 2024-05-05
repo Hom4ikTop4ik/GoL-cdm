@@ -249,12 +249,11 @@ right: # shla j
 		rts # go back
 	fi
 	
-	#ld r0, r0 # r0 = LOW-byte of I if up, of J if right
 	inc r0
-	ld r0, r2 # r0 = LOW-byte of I if up, of J if right
+	ld r0, r2 # r2 = LOW-byte of I if up, of J if right
 	if
 		cmp r3, r2
-	is gt # if HIGH-byte > LOW-byte
+	is hi # if HIGH-byte > LOW-byte (unsigned)
 		shla r3 # I can't do shla 1000_0000 because rts worked
 		
 	else  # if HIGH-byte < LOW-byte
@@ -282,7 +281,7 @@ left: # shr j
 	# r0 - LOW-byte  address in memory
 	# r1 - HIGH-byte adrress in matrix
 	
-	ld r0, r2 # r0 = LOW-byte of I if down, of J if left
+	ld r0, r2 # r2 = LOW-byte of I if down, of J if left
 	if
 		ldi r3, 0x01
 		cmp r2, r3
@@ -290,25 +289,25 @@ left: # shr j
 		rts # go back
 	fi
 	
-	# ld r1, r3 # r1 = HIGH-byte of I if down, of J if left
 	dec r0
-	ld r0, r3 # r1 = HIGH-byte of I if down, of J if left
+	ld r0, r3 # r3 = HIGH-byte of I if down, of J if left
 	if
 		cmp r3, r2
-	is gt # if HIGH-byte > LOW-byte
+	is hi # if HIGH-byte > LOW-byte (unsigned)
 		if
+			cmp r2, r3 # if the HIGH byte > LOW byte Carry bit is set, but it must be clear. cmp r2,r3 makes it clear
 			shr r3 
 		is z # if HIGH-byte was 0x0001 and became 0x00
 			ldi r2, 0b10000000
 		fi
 		
-	else  # if HIGH-byte < LOW-byte
+	else  # if HIGH-byte < LOW-byte (Carry bit is clear. It's fine)
 		shr r2 # I can't do shr 0000_0001 because rts worked
 	fi
 	
 	st r0, r3 # store HIGH-byte to memory
 	inc r0 # r0 is LOW-byte address in memory now
-	st r0, r2 # stor LOW-byte to memory
+	st r0, r2 # store LOW-byte to memory
 	
 	st r1, r3 # 'store' HIGH-byte to matrix
 	inc r1 # r1 is LOW-byte address in matrix now 
