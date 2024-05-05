@@ -102,7 +102,7 @@ game:
 					if
 						ldi r0, 0x04
 						cmp r1, r0
-					is ge # if UP or RIGHT
+					is hs # if UP or RIGHT
 						if
 							# it is enough to do cmp 1 time — comment
 							# cmp r1, r0
@@ -137,7 +137,7 @@ game:
 				if
 					ldi r0, 64
 					cmp r1, r0
-				is ge # 64 <= KB-in <= 255, i.e. == CLEAR or PAUSE
+				is hs # 64 <= KB-in <= 255, i.e. == CLEAR or PAUSE
 					if
 						# it is enough to do cmp 1 time — comment
 						# cmp r1, r0
@@ -169,7 +169,7 @@ game:
 					if
 						ldi r0, 32 # 0b0010_0000
 						cmp r1, r0
-					is ge # KB-in == 32 or 48, i.e. SET0 or SET1
+					is hs # KB-in == 32 or 48, i.e. SET0 or SET1
 						if 
 							# it is enough to do cmp 1 time — comment
 							# cmp r1, r0
@@ -293,16 +293,16 @@ setInv:
 	# input:
 	# r3 is state (01, 10 or 11)
 	
-	ldi r0, 0xF2
-	ld r0, r0
+	ldi r2, 0xF2
+	ld r2, r0 # r0 = STATE from memory
 	
 	ldi r1, 0b11111001 # state's bits = 0
 	and r1, r0 # r0 = STATE where state = 00
 	or r3, r0  # r0 = STATE where state = new state
 	
-	st r3, r0 # store STATE to 
-	ldi r3, 0xFA
-	st r3, r0
+	st r2, r0 # store STATE to memory
+	ldi r2, 0xFA
+	st r2, r0 # 'store' STATE to matrix
 	
 	rts # go back
 
