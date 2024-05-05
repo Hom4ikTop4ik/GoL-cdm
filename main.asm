@@ -27,7 +27,7 @@ init:
 	st r0, r2 # set LOW-byte i-cursor equal 1
 	ldi r3, 0xF5
 	st r3, r2 # set LOW-byte i-cursor in memory equal 1
-	
+		
 	# ldi r0, 0xFE
 	inc r0 # r0 was equal 0xFD and become 0xFE
 	st r0, r1 # clear HIGH-byte j-cursor
@@ -153,10 +153,9 @@ game:
 						st r3, r1 # 'store' new STATE, where clear = 1
 						# matrix has a little time to clear
 						st r3, r0 # 'store' old STATE, where clear = 0
-						#jsr clear
 					else # KB-in == 128, i.e. == PAUSE
 						#ldi r3, 0xF2 # }
-						ld r3, r0	 # } r0 = load STATE from memory
+						ld r3, r0	 # } r0 = STATE from memory
 						
 						ldi r1, 0b00001000
 						xor r1, r0 # r0 = new STATE, where pause was inverted
@@ -164,7 +163,6 @@ game:
 						st r3, r0 # store new STATE to memory
 						ldi r1, 0xFA
 						st r1, r0 # 'store' new STATE to matrix 
-						#jsr pause
 					fi
 					
 				else # 16 <= KB-in < 63
@@ -205,36 +203,9 @@ game:
 		fi # end if KB-in > 0
 		
 	wend
-	
 halt
 
 
-# never mind:
-#### FOR PROGRAMERS:
-#### DON'T USE r2
-####   OR do "ldi r2, 0xF8" after using
-#### I don't want clear r2 every iteration
-#### 
-#### you can use r3 because I use clr r3 every iteration instead of tst r3
-
-
-# DONE
-torus:
-#	ldi r3, 0xF2 # } r1 = load STATE from memory
-#	ld  r3, r1   # } 
-#	
-#	ldi r0, 0b00000001  # } invert 'torus' value in state
-#	xor r0, r1 			# } and store to R1
-#	
-#	st r3, r1 # store STATE to memory
-#	
-#	ldi r3, 0xFA # } 'store' STATE to matrix
-#	st r3, r1    # } 
-#	
-#	rts # go back
-
-
-# DONE
 up: # shla i
 right: # shla j
 
@@ -273,7 +244,6 @@ right: # shla j
 	
 	
 
-# DONE
 down: # shr i
 left: # shr j
 
@@ -316,36 +286,6 @@ left: # shr j
 	rts # go back
 	
 	
-
-clear:
-#	ldi r0, 0xF2 # }
-#	ld r0, r0	 # } r0 = STATE
-#	
-#	ldi r1, 0b00010000
-#	
-#	or r0, r1 # r1 = STATE, but clear = 1
-#	ldi r3, 0xFA
-#	
-#	st r3, r1 # 'store' new STATE, where clear = 1
-#	# matrix has a little time to clear
-#	st r3, r0 # 'store' old STATE, where clear = 0
-#	
-#	rts # go back
-
-
-pause:
-#	ldi r3, 0xF2 # }
-#	ld r3, r0	 # } r0 = STATE
-#	
-#	ldi r1, 0b00001000
-#	xor r1, r0 # r0 = new STATE, where pause was inverted
-#	
-#	st r3, r0 # store new STATE to memory
-#	ldi r3, 0xFA
-#	st r3, r0 # 'store' new STATE to matrix 
-#	
-#	rts # go back
-
 
 set0:
 set1:
