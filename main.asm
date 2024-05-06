@@ -102,7 +102,7 @@ game:
 					if
 						ldi r0, 0x04
 						cmp r1, r0
-					is hs # if UP or RIGHT
+					is ge # if UP or RIGHT
 						if
 							# it is enough to do cmp 1 time — comment
 							# cmp r1, r0
@@ -169,7 +169,7 @@ game:
 					if
 						ldi r0, 32 # 0b0010_0000
 						cmp r1, r0
-					is hs # KB-in == 32 or 48, i.e. SET0 or SET1
+					is ge # KB-in == 32 or 48, i.e. SET0 or SET1
 						if 
 							# it is enough to do cmp 1 time — comment
 							# cmp r1, r0
