@@ -79,9 +79,9 @@ game:
 			
 			
 			if
-				ldi r0, 0x0F
+				ldi r0, 0x0f
 				cmp r1, r0
-			is le # 0 < KB-in <= 15 
+			is ls # 0 < KB-in <= 15 
 				if 
 					# it is enough to do cmp 1 time — comment
 					# cmp r1, r0
@@ -216,7 +216,7 @@ right: # shla j
 	ld r0, r3 # r3 = HIGH-byte from memory
 	if
 		tst r3
-	is ne # if (r3 == 0b1000_0000); if can't move the cursor up/right
+	is mi # if (r3 == 0b1000_0000); if can't move the cursor up/right
 		rts # go back
 	fi
 	
@@ -297,12 +297,12 @@ setInv:
 	ld r2, r0 # r0 = STATE from memory
 	
 	ldi r1, 0b11111001 # state's bits = 0
-	and r1, r0 # r0 = STATE where state = 00
-	or r3, r0  # r0 = STATE where state = new state
+	and r0, r1 # r0 = STATE where state = 00
+	or r3, r1  # r0 = STATE where state = new state
 	
-	st r2, r0 # store STATE to memory
 	ldi r2, 0xFA
-	st r2, r0 # 'store' STATE to matrix
+	st r2, r1 # 'store' STATE to matrix
+	st r2, r0 # 'store' old STATE to matrix
 	
 	rts # go back
 
