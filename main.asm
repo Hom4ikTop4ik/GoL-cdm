@@ -1,19 +1,6 @@
 asect 0
 # Your program starts from 0x00 address
 
-start:
-    
-# # # setPS 0x80 # enable interrupts
-# #push r3
-#ldi r3, 0x80
-#osix 0x00
-# #pop r3
-
-
-# E--C PSST
-# 4003 2110
-
-########################################################
 init:
 	setsp 0xF0 # reserve 16 bytes 
 	
@@ -36,6 +23,10 @@ init:
 	ldi r3, 0xF7
 	st r3, r2 # set LOW-byte j-cursor in memory equal 1
 	
+	
+	# STATE:
+	# E--C PSST
+	# 4003 2110
 	
 	# state (should be equal 0b0000_1000 in start): 
 	# 	T torus  = 0
@@ -112,7 +103,7 @@ game:
 							jsr right # move the cursor 1 column righter
 						else # KB-in == 8, i.e. == UP
 							ldi r0, 0xF4 # } store HIGH-byte of I in memory to r0 
-							ldi r1, 0xFD							 # } store LOW-byte  of I in matrix to r1
+							ldi r1, 0xFD # } store LOW-byte  of I in matrix to r1
 							jsr up # move the cursor 1 line higher
 						fi
 					else # if DOWN or RIGHT
@@ -229,7 +220,7 @@ right: # shla j
 		
 	else  # if HIGH-byte < LOW-byte
 		shla r2
-		addc r3, r3 # r1 = 0+0 + C-bit (if r2 was 0b1000_0000, it become 0x00 and r3 will equal 0x01)
+		addc r3, r3 # r3 = 0+0 + C-bit (if r2 was 0b1000_0000, it become 0x00 and r3 will equal 0x01)
 	fi
 	
 	st r0, r2 # store LOW-byte to memory
